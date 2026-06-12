@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#b93430"/>
+      <stop offset="1" stop-color="#7c1d16"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e8cd8f"/>
+      <stop offset="1" stop-color="#b5893b"/>
+    </linearGradient>
+  </defs>
+  <!-- rounded square background -->
+  <rect x="32" y="32" width="960" height="960" rx="210" fill="url(#bg)"/>
+  <rect x="58" y="58" width="908" height="908" rx="186" fill="none" stroke="url(#gold)" stroke-width="10" opacity="0.9"/>
+
+  <!-- luopan rings -->
+  <g fill="none" stroke="#e8cd8f" opacity="0.5">
+    <circle cx="512" cy="512" r="368" stroke-width="8"/>
+    <circle cx="512" cy="512" r="312" stroke-width="4"/>
+    <circle cx="512" cy="512" r="180" stroke-width="6"/>
+  </g>
+  <!-- 8 spokes -->
+  <g stroke="#e8cd8f" stroke-width="5" opacity="0.45">
+    <line x1="512" y1="144" x2="512" y2="332"/>
+    <line x1="512" y1="692" x2="512" y2="880"/>
+    <line x1="144" y1="512" x2="332" y2="512"/>
+    <line x1="692" y1="512" x2="880" y2="512"/>
+    <line x1="252" y1="252" x2="385" y2="385"/>
+    <line x1="639" y1="639" x2="772" y2="772"/>
+    <line x1="772" y1="252" x2="639" y2="385"/>
+    <line x1="385" y1="639" x2="252" y2="772"/>
+  </g>
+  <!-- trigram ticks on outer ring -->
+  <g stroke="#f3e0b4" stroke-width="14" stroke-linecap="round" opacity="0.85">
+    <g transform="translate(512,512) rotate(0)"><line x1="0" y1="-352" x2="0" y2="-384"/></g>
+    <g transform="translate(512,512) rotate(45)"><line x1="0" y1="-352" x2="0" y2="-384"/></g>
+    <g transform="translate(512,512) rotate(90)"><line x1="0" y1="-352" x2="0" y2="-384"/></g>
+    <g transform="translate(512,512) rotate(135)"><line x1="0" y1="-352" x2="0" y2="-384"/></g>
+    <g transform="translate(512,512) rotate(180)"><line x1="0" y1="-352" x2="0" y2="-384"/></g>
+    <g transform="translate(512,512) rotate(225)"><line x1="0" y1="-352" x2="0" y2="-384"/></g>
+    <g transform="translate(512,512) rotate(270)"><line x1="0" y1="-352" x2="0" y2="-384"/></g>
+    <g transform="translate(512,512) rotate(315)"><line x1="0" y1="-352" x2="0" y2="-384"/></g>
+  </g>
+
+  <!-- taiji -->
+  <g transform="translate(512,512)">
+    <circle r="180" fill="#f7efdd"/>
+    <path d="M0,-180 A180,180 0 0 1 0,180 A90,90 0 0 1 0,0 A90,90 0 0 0 0,-180 Z" fill="#2b2018"/>
+    <circle cx="0" cy="-90" r="30" fill="#2b2018"/>
+    <circle cx="0" cy="90" r="30" fill="#f7efdd"/>
+  </g>
+</svg>

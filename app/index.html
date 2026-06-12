@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>风水计算器 · Feng Shui Calculator — Ba Zi · Flying Stars · Tong Shu · Qi Men Dun Jia</title>
+<meta name="description" content="Free Chinese metaphysics calculator: Ba Zi (Four Pillars), Xuan Kong Flying Stars, Tong Shu Almanac, Qi Men Dun Jia.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&family=Noto+Sans+SC:wght@400;500;700&family=Cinzel:wght@600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-bg" aria-hidden="true">
+    <!-- decorative bagua / luopan motif -->
+    <svg viewBox="0 0 200 200" class="bagua">
+      <g fill="none" stroke="currentColor" stroke-width="1.4">
+        <circle cx="100" cy="100" r="92"/>
+        <circle cx="100" cy="100" r="74"/>
+        <circle cx="100" cy="100" r="40"/>
+        <g id="spokes"></g>
+      </g>
+      <!-- taiji -->
+      <g transform="translate(100,100)">
+        <path d="M0,-26 A26,26 0 0,1 0,26 A13,13 0 0,1 0,0 A13,13 0 0,0 0,-26 Z" fill="currentColor"/>
+        <circle cx="0" cy="-13" r="4.5" fill="#fff"/>
+        <circle cx="0" cy="13" r="4.5" fill="currentColor"/>
+        <circle cx="0" cy="0" r="26" fill="none" stroke="currentColor" stroke-width="1.4"/>
+      </g>
+    </svg>
+  </div>
+  <div class="wrap header-inner">
+    <div class="seal">風<br>水</div>
+    <div class="titles">
+      <h1>风水计算器 <span class="en">Feng&nbsp;Shui&nbsp;Calculator</span></h1>
+      <p class="subtitle">八字 Ba Zi &nbsp;·&nbsp; 玄空飞星 Flying Stars &nbsp;·&nbsp; 通书 Tong Shu &nbsp;·&nbsp; 奇门遁甲 Qi Men Dun Jia</p>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs-bar">
+  <div class="wrap tabs" role="tablist" aria-label="Calculators">
+    <button class="tab active" data-tab="bazi" role="tab" aria-selected="true" aria-controls="bazi"><span class="cn">八字</span><span class="lt">Ba Zi</span></button>
+    <button class="tab" data-tab="flyingstars" role="tab" aria-selected="false" aria-controls="flyingstars" tabindex="-1"><span class="cn">玄空飞星</span><span class="lt">Flying Stars</span></button>
+    <button class="tab" data-tab="tongshu" role="tab" aria-selected="false" aria-controls="tongshu" tabindex="-1"><span class="cn">通书</span><span class="lt">Tong Shu</span></button>
+    <button class="tab" data-tab="qimen" role="tab" aria-selected="false" aria-controls="qimen" tabindex="-1"><span class="cn">奇门遁甲</span><span class="lt">Qi Men Dun Jia</span></button>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- ============================ BA ZI ============================ -->
+  <section id="bazi" class="panel active" role="tabpanel" aria-label="Ba Zi">
+    <div class="panel-head">
+      <h2><span class="cn">八字四柱</span> Ba Zi · Four Pillars of Destiny</h2>
+      <p class="lead">Enter a birth moment to derive the Four Pillars (Year, Month, Day, Hour), the Ten Gods, hidden stems, Na Yin, the five-element balance and the decade Luck Pillars (大运).</p>
+    </div>
+    <form id="bazi-form" class="calc-form card">
+      <div class="field"><label>Date of Birth</label><input type="date" id="bz-date" required value="1990-01-01"></div>
+      <div class="field"><label>Time</label><input type="time" id="bz-time" value="12:00"></div>
+      <div class="field checkbox"><label><input type="checkbox" id="bz-hourknown" checked> Time of birth is known</label></div>
+      <div class="field"><label>Gender</label>
+        <select id="bz-gender"><option value="Male">Male 男</option><option value="Female">Female 女</option></select>
+      </div>
+      <div class="field"><label>Timezone (UTC offset)</label>
+        <input type="number" id="bz-tz" value="8" step="0.5" min="-12" max="14">
+      </div>
+      <button type="submit">Calculate 排盘</button>
+    </form>
+    <div id="bazi-result" class="result"></div>
+  </section>
+
+  <!-- ======================== FLYING STARS ======================== -->
+  <section id="flyingstars" class="panel" role="tabpanel" aria-label="Flying Stars">
+    <div class="panel-head">
+      <h2><span class="cn">玄空飞星</span> Xuan Kong Flying Stars</h2>
+      <p class="lead">Plot the nine-palace flying-star chart of a building from its construction Period and facing direction, with Mountain (山), Water (向) and annual stars.</p>
+    </div>
+    <form id="fs-form" class="calc-form card">
+      <div class="field"><label>Period 运</label><select id="fs-period"></select></div>
+      <div class="field"><label>House Facing 坐向</label><select id="fs-facing"></select></div>
+      <div class="field"><label>Annual Star 流年 (optional)</label><select id="fs-year"></select></div>
+      <button type="submit">Plot Chart 飞星</button>
+    </form>
+    <div id="fs-result" class="result"></div>
+  </section>
+
+  <!-- =========================== TONG SHU ========================= -->
+  <section id="tongshu" class="panel" role="tabpanel" aria-label="Tong Shu">
+    <div class="panel-head">
+      <h2><span class="cn">通书</span> Tong Shu · Chinese Almanac</h2>
+      <p class="lead">Read a day's almanac: the 12 Officers, 28 Constellations, Yellow &amp; Black day-god, Na Yin, solar term, moon phase and the zodiac horoscope.</p>
+    </div>
+    <form id="ts-form" class="calc-form card">
+      <div class="field"><label>Date</label><input type="date" id="ts-date" required></div>
+      <div class="field"><label>Time</label><input type="time" id="ts-time" value="12:00"></div>
+      <div class="field"><label>Timezone (UTC offset)</label><input type="number" id="ts-tz" value="8" step="0.5"></div>
+      <button type="submit">Calculate 查日</button>
+      <button type="button" class="now-btn" data-now="ts">Now 现在</button>
+    </form>
+    <div id="tongshu-result" class="result"></div>
+  </section>
+
+  <!-- ========================= QI MEN DUN JIA ====================== -->
+  <section id="qimen" class="panel" role="tabpanel" aria-label="Qi Men Dun Jia">
+    <div class="panel-head">
+      <h2><span class="cn">奇门遁甲</span> Qi Men Dun Jia <small>时家转盘 · hourly transpan</small></h2>
+      <p class="lead">Cast the nine-palace Qi Men chart for a moment: the 局 number, the Three Marvels &amp; Six Standards, the Nine Stars, Eight Doors and Eight Gods.</p>
+    </div>
+    <form id="qm-form" class="calc-form card">
+      <div class="field"><label>Date</label><input type="date" id="qm-date" required></div>
+      <div class="field"><label>Time</label><input type="time" id="qm-time" value="12:00"></div>
+      <div class="field"><label>Timezone (UTC offset)</label><input type="number" id="qm-tz" value="8" step="0.5"></div>
+      <button type="submit">Calculate 起局</button>
+      <button type="button" class="now-btn" data-now="qm">Now 现在</button>
+    </form>
+    <div id="qimen-result" class="result"></div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>A self-contained implementation of the underlying Chinese-metaphysics algorithms — solar terms via Meeus' astronomy, GanZhi pillars, Xuan Kong flight, and San Yuan Qi Men.</p>
+    <p class="fine">For study &amp; reference only · 仅供学习参考</p>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/astro.js"></script>
+<script src="js/bazi.js"></script>
+<script src="js/flyingstars.js"></script>
+<script src="js/tongshu.js"></script>
+<script src="js/qimen.js"></script>
+<script src="js/ai-context.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/app.js"></script>
+<script>
+/* draw the 8 spokes + 8 trigram lines on the header bagua */
+(function () {
+  const g = document.getElementById('spokes');
+  if (!g) return;
+  const NS = 'http://www.w3.org/2000/svg', cx = 100, cy = 100;
+  for (let i = 0; i < 8; i++) {
+    const a = (i * 45) * Math.PI / 180;
+    const l = document.createElementNS(NS, 'line');
+    l.setAttribute('x1', cx + 40 * Math.cos(a)); l.setAttribute('y1', cy + 40 * Math.sin(a));
+    l.setAttribute('x2', cx + 92 * Math.cos(a)); l.setAttribute('y2', cy + 92 * Math.sin(a));
+    g.appendChild(l);
+  }
+})();
+</script>
+</body>
+</html>

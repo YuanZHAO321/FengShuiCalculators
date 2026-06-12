@@ -1,0 +1,64 @@
+{
+  "name": "feng-shui-calculators",
+  "productName": "Feng Shui Calculator",
+  "version": "1.0.0",
+  "description": "风水计算器 — Ba Zi, Xuan Kong Flying Stars, Tong Shu almanac and Qi Men Dun Jia calculators with AI-powered chart analysis (any OpenAI-compatible API).",
+  "main": "electron/main.js",
+  "license": "MIT",
+  "author": {
+    "name": "zhaoyuan",
+    "email": "zhaoyuan.zy@outlook.com"
+  },
+  "scripts": {
+    "start": "electron .",
+    "test": "node app/test/check.js",
+    "dist:mac-arm64": "electron-builder --mac --arm64",
+    "dist:mac-x64": "electron-builder --mac --x64",
+    "dist:win": "electron-builder --win --x64",
+    "dist:all": "electron-builder --mac --arm64 --x64 && electron-builder --win --x64"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.zhaoyuan.fengshui-calculators",
+    "productName": "Feng Shui Calculator",
+    "copyright": "© 2026 zhaoyuan — for study & reference only",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "electron/**/*",
+      "app/**/*",
+      "!app/test/**",
+      "!**/.DS_Store",
+      "!**/.Rhistory"
+    ],
+    "mac": {
+      "category": "public.app-category.lifestyle",
+      "identity": null,
+      "artifactName": "FengShuiCalculator-${version}-mac-${arch}.${ext}",
+      "target": [
+        { "target": "dmg" },
+        { "target": "zip" }
+      ]
+    },
+    "win": {
+      "artifactName": "FengShuiCalculator-${version}-win-${arch}.${ext}",
+      "target": [
+        { "target": "nsis", "arch": ["x64"] },
+        { "target": "portable", "arch": ["x64"] }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "shortcutName": "Feng Shui Calculator"
+    },
+    "portable": {
+      "artifactName": "FengShuiCalculator-${version}-win-${arch}-portable.${ext}"
+    }
+  }
+}
