@@ -1,7 +1,7 @@
 {
   "name": "feng-shui-calculators",
   "productName": "Feng Shui Calculator",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "风水计算器 — Ba Zi, Xuan Kong Flying Stars, Tong Shu almanac and Qi Men Dun Jia calculators with AI-powered chart analysis (any OpenAI-compatible API).",
   "main": "electron/main.js",
   "license": "MIT",
@@ -12,6 +12,7 @@
   "scripts": {
     "start": "electron .",
     "test": "node app/test/check.js",
+    "test:e2e": "electron app/test/e2e-capture.cjs && electron app/test/ai-e2e.cjs",
     "dist:mac-arm64": "electron-builder --mac --arm64",
     "dist:mac-x64": "electron-builder --mac --x64",
     "dist:win": "electron-builder --win --x64",

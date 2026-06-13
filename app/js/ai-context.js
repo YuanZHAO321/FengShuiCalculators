@@ -73,7 +73,7 @@ const AIContext = (function () {
     L.push("");
     const A = r.analysis;
     L.push("五、程序初步分析（简化加权打分,供参考基线）");
-    L.push(`- 身强弱: ${A.verdict.key}（生扶日主的力量[比劫+印绶]占总量 ${A.pct}%；≥55%判身强,≤40%判身弱,之间为中和）`);
+    L.push(`- 身强弱: ${A.verdict.key}（生扶日主的力量[比劫+印绶]占总量 ${A.pct}%，按月令${r.standing.key}修正为 ${A.adjPct}%；修正后≥55%判身强,≤40%判身弱,之间为中和）`);
     L.push(`- 喜用五行(初判对命主有利的五行): ${A.favorable.map(e => CM.ELEMENTS_CN[e]).join("、")}`);
     L.push(`- 十神分布: ${Object.keys(A.godCount).map(k => `${k}×${A.godCount[k]}`).join("，")}${A.dominant ? `；主导十神=${A.dominant}` : ""}`);
     L.push("");

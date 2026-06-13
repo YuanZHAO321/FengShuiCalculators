@@ -121,11 +121,17 @@ const BaZi = (function () {
     const support = score[dmEl] + score[resourceEl];
     const pct = total ? Math.round((support / total) * 100) : 50;
 
+    // 得令 dominates the verdict in traditional practice: a day master born
+    // in season (旺/相) is strong with far less support, and vice versa.
+    // Shift the support percentage by the seasonal standing before judging.
+    const STANDING_ADJ = { "旺": 12, "相": 6, "休": -4, "囚": -8, "死": -10 };
+    const adjPct = Math.max(0, Math.min(100, pct + (STANDING_ADJ[standing.key] || 0)));
+
     let verdict, favorable;
-    if (pct >= 55) {
+    if (adjPct >= 55) {
       verdict = { key: "身强", en: "Strong Day Master" };
       favorable = [(dmEl + 1) % 5, (dmEl + 2) % 5, (dmEl + 3) % 5];   // 食伤·财·官杀
-    } else if (pct <= 40) {
+    } else if (adjPct <= 40) {
       verdict = { key: "身弱", en: "Weak Day Master" };
       favorable = [resourceEl, dmEl];                                  // 印·比劫
     } else {
@@ -148,7 +154,7 @@ const BaZi = (function () {
     Object.keys(godCount).forEach(k => { if (!dominant || godCount[k] > godCount[dominant]) dominant = k; });
 
     return {
-      score, pct, verdict, favorable, dominant, godCount,
+      score, pct, adjPct, verdict, favorable, dominant, godCount,
       persona: CM.DM_PERSONA[dm],
     };
   }

@@ -143,8 +143,8 @@
     const A = r.analysis;
     html += `<div class="section-title">命局分析 Chart Analysis</div><div class="analysis card">`;
     html += `<div class="a-row"><span class="a-chip ${A.verdict.key === "身强" ? "r-ji" : A.verdict.key === "身弱" ? "r-xiong" : "r-ping"}">${A.verdict.key}</span>
-      <b>${A.verdict.en}</b> — 比劫印绶共占 ${A.pct}%(${r.standing.cn})
-      <div class="a-meter"><span style="width:${A.pct}%"></span></div></div>`;
+      <b>${A.verdict.en}</b> — 比劫印绶共占 ${A.pct}%，月令${r.standing.key}修正后 ${A.adjPct}%(${r.standing.cn})
+      <div class="a-meter"><span style="width:${A.adjPct}%"></span></div></div>`;
     html += `<div class="a-row"><b>日主气质</b> ${CM.STEMS_CN[r.dayMaster]} · ${A.persona[0]}:${A.persona[1]}<br><small>${A.persona[2]}</small></div>`;
     html += `<div class="a-row"><b>喜用五行</b> ` + A.favorable.map(e =>
       `<span class="el-chip" style="border-color:${CM.ELEMENT_COLOR[e]};color:${CM.ELEMENT_COLOR[e]}">${CM.ELEMENTS_CN[e]} ${CM.ELEMENTS[e]} · ${CM.ELEMENT_ADVICE[e].dir} · ${CM.ELEMENT_ADVICE[e].color}</span>`).join(" ") + `</div>`;

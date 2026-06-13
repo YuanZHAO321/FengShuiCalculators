@@ -180,6 +180,24 @@ const gz = p => CM.STEMS_CN[p.stem] + CM.BRANCHES_CN[p.branch];
   eq("qm factors arrays", outer2.every(p => Array.isArray(p.factors)), true);
 }
 
+/* ---- 喜用神: seasonal standing must shift the strength verdict ---- */
+{
+  // 乙酉年 己卯月 甲辰日 甲戌时 — 甲木生卯月得令(羊刃),应判身强,喜火土金,
+  // 而不是按未修正占比误判中和→喜水木 (user-reported bug)
+  const chart = {
+    year: { stem: 1, branch: 9 },   // 乙酉
+    month: { stem: 5, branch: 3 },  // 己卯
+    day: { stem: 0, branch: 4 },    // 甲辰
+    hour: { stem: 0, branch: 10 },  // 甲戌
+  };
+  const standing = BaZi.seasonStanding(CM.STEM_ELEMENT[0], 3);
+  eq("standing 甲卯月 = 旺", standing.key, "旺");
+  const A = BaZi.analyze(chart, standing);
+  eq("乙酉己卯甲辰甲戌 verdict", A.verdict.key, "身强");
+  eq("乙酉己卯甲辰甲戌 favors 火土金", A.favorable, [1, 2, 3]);
+  eq("adjPct > pct when 旺", A.adjPct > A.pct, true);
+}
+
 /* ---- AI context serializers ---- */
 {
   const dt = { year: 2026, month: 6, day: 6, hour: 19, minute: 39, hourKnown: true, tzOffset: 8, gender: "Male" };
