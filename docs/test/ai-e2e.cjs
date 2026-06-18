@@ -2,7 +2,7 @@
  * reasoning_content, plus a model that returns no content) drives the real
  * chat UI through the Electron IPC bridge — verifies reasoning display,
  * empty-reply diagnostics, compare mode and source·model labels.
- * Run: npx electron app/test/ai-e2e.cjs */
+ * Run: npx electron docs/test/ai-e2e.cjs */
 "use strict";
 const { app, BrowserWindow } = require("electron");
 const { registerAiProxy } = require("../../electron/ai-proxy");

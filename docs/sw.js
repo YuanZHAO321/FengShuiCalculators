@@ -13,7 +13,7 @@ const CACHE_VERSION = "fsc-v1.1.2";
 const SHELL_CACHE = CACHE_VERSION + "-shell";
 const FONT_CACHE = CACHE_VERSION + "-fonts";
 
-/* App shell — paths relative to the SW scope (the app/ directory). */
+/* App shell — paths relative to the SW scope (the docs/ directory). */
 const SHELL_ASSETS = [
   "./",
   "./index.html",

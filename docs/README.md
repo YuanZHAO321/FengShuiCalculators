@@ -21,7 +21,7 @@ verdicts are simplified rule-based readings, intended for study only.
 ## Architecture
 
 ```
-app/
+docs/
 ├── index.html          UI: tabbed forms for the 4 calculators
 ├── css/style.css       styling (matches the original #B93430 red theme)
 └── js/
@@ -88,8 +88,8 @@ All of the above (plus 立春 year-boundary cases, the 23:00 day rollover, the
 regression suite — run it with:
 
 ```bash
-node app/test/check.js          # algorithms + AI-context serializers
-npx electron app/test/e2e-capture.cjs   # Electron smoke test + screenshots
+node docs/test/check.js          # algorithms + AI-context serializers
+npx electron docs/test/e2e-capture.cjs   # Electron smoke test + screenshots
 ```
 
 ## Notes & conventions

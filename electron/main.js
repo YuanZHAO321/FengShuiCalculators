@@ -28,7 +28,7 @@ function createWindow() {
       sandbox: true,
     },
   });
-  mainWindow.loadFile(path.join(__dirname, "..", "app", "index.html"));
+  mainWindow.loadFile(path.join(__dirname, "..", "docs", "index.html"));
   // open external links (if any appear in AI answers) in the system browser
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     if (/^https?:/i.test(url)) shell.openExternal(url);

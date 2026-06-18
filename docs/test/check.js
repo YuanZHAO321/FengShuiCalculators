@@ -1,5 +1,5 @@
 /* Regression check against the validated reference values in README.md.
- * Run: node app/test/check.js  (from repo root, or anywhere — paths resolved) */
+ * Run: node docs/test/check.js  (from repo root, or anywhere — paths resolved) */
 "use strict";
 const fs = require("fs");
 const path = require("path");

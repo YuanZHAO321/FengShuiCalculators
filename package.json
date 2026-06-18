@@ -11,8 +11,8 @@
   },
   "scripts": {
     "start": "electron .",
-    "test": "node app/test/check.js",
-    "test:e2e": "electron app/test/e2e-capture.cjs && electron app/test/ai-e2e.cjs",
+    "test": "node docs/test/check.js",
+    "test:e2e": "electron docs/test/e2e-capture.cjs && electron docs/test/ai-e2e.cjs",
     "dist:mac-arm64": "electron-builder --mac --arm64",
     "dist:mac-x64": "electron-builder --mac --x64",
     "dist:win": "electron-builder --win --x64",
@@ -32,8 +32,8 @@
     },
     "files": [
       "electron/**/*",
-      "app/**/*",
-      "!app/test/**",
+      "docs/**/*",
+      "!docs/test/**",
       "!**/.DS_Store",
       "!**/.Rhistory"
     ],

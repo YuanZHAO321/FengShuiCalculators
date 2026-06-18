@@ -1,6 +1,6 @@
 /* Smoke test: launch the real app in Electron, collect renderer console
  * errors, exercise the AI bridge + chat UI + persistence, save screenshots.
- * Run: npx electron app/test/e2e-capture.cjs */
+ * Run: npx electron docs/test/e2e-capture.cjs */
 "use strict";
 const { app, BrowserWindow } = require("electron");
 const { registerAiProxy } = require("../../electron/ai-proxy");
