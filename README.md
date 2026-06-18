@@ -1,11 +1,23 @@
 # 风水计算器 · Feng Shui Calculator
 
-**四合一中国玄学计算器 + AI 智能解读桌面应用**
+**四合一中国玄学计算器 + AI 智能解读 · 桌面应用 & 在线 PWA**
 Ba Zi (Four Pillars) · Xuan Kong Flying Stars · Tong Shu Almanac · Qi Men Dun Jia — with AI-powered chart analysis via any OpenAI-compatible API.
 
 > 仅供学习与传统文化研究参考 · For study & reference only
 
 ---
+
+## 🌐 在线使用 Online (PWA)
+
+**👉 [https://yuanzhao321.github.io/FengShuiCalculators/](https://yuanzhao321.github.io/FengShuiCalculators/)**
+
+无需安装，浏览器直接打开即用；也可「添加到主屏幕 / 安装应用」作为 PWA 离线使用：
+
+- **iPhone / iPad（Safari）**：分享 → 添加到主屏幕。
+- **Android（Chrome）**：菜单 → 安装应用 / 添加到主屏幕。
+- **桌面（Chrome / Edge）**：地址栏右侧的安装图标，或菜单 → 安装。
+
+安装后全屏运行、离线可用（排盘算法完全本地，无需联网）；适配 iPhone / iPad（横竖屏）刘海与安全区，兼容 Safari / Chrome / Edge / Firefox。AI 解读功能需联网，且在浏览器中可能受部分服务商 CORS 限制（桌面版无此问题）。
 
 ## ✨ 功能 Features
 
@@ -47,7 +59,7 @@ Ba Zi (Four Pillars) · Xuan Kong Flying Stars · Tong Shu Almanac · Qi Men Dun
 
 > macOS 版本未签名公证，首次打开如提示"无法验证开发者"，请右键点击应用 →「打开」，或在 终端 执行 `xattr -dr com.apple.quarantine "/Applications/Feng Shui Calculator.app"`。
 
-**无需安装也可使用**：本应用是纯前端实现，直接用浏览器打开 `app/index.html` 即可（浏览器中 AI 功能可能受部分服务商 CORS 限制，桌面版无此问题）。
+**无需安装也可使用**：直接访问 [在线 PWA](https://yuanzhao321.github.io/FengShuiCalculators/)，或在本地用浏览器打开 `app/index.html`（本应用为纯前端实现）。浏览器中 AI 功能可能受部分服务商 CORS 限制，桌面版无此问题。
 
 ## 🔧 AI 配置 AI Setup
 
@@ -75,16 +87,20 @@ npm test           # 排盘算法 + AI 上下文回归测试（纯 Node，无需
 npm run dist:mac-arm64   # 打包 macOS Apple Silicon
 npm run dist:mac-x64     # 打包 macOS Intel
 npm run dist:win         # 打包 Windows x64（macOS/Linux 上交叉构建）
+npm run dist:all         # 一次打包三平台安装包
 ```
 
-推送 `v*` 标签会触发 GitHub Actions 自动构建三平台安装包并附到草稿 Release。
+构建产物输出到 `dist/`，校验和见 `dist/SHA256SUMS.txt`。
 
 ### 架构
 
 ```
-app/                    纯前端应用（无构建步骤，可直接浏览器打开）
+app/                    纯前端应用（无构建步骤，可直接浏览器打开 / 部署为 PWA）
 ├── index.html          四个计算器的标签页 UI
-├── css/style.css       朱砂/鎏金/宣纸视觉主题，自动暗色模式
+├── manifest.webmanifest PWA 清单（名称、图标、独立窗口、主题色）
+├── sw.js               Service Worker（预缓存应用外壳，离线可用）
+├── icons/              PWA 图标（192/512 含 maskable、Apple touch icon）
+├── css/style.css       朱砂/鎏金/宣纸视觉主题，自动暗色模式，安全区适配
 └── js/
     ├── data.js         玄学常量表（干支、纳音、星宿、奇门局表…）
     ├── astro.js        天文历法核心（儒略日、太阳黄经、月相、干支）
@@ -99,6 +115,24 @@ electron/
 ```
 
 AI 请求链路：渲染进程检测到 `window.aiBridge`（桌面版）时走主进程 `net.fetch` 代理（含 SSE 流式转发与中止）；在浏览器中则直接 `fetch`。两条链路都支持流式输出，并在服务商不支持流式时自动回退为普通请求。
+
+### 手动部署到 GitHub Pages
+
+PWA 全部文件在 `app/` 目录，需让 GitHub Pages 以该目录内容为站点根。手动发布（无需 GitHub Actions），推荐用 `git subtree` 把 `app/` 推到 `gh-pages` 分支根目录：
+
+```bash
+# 在仓库根目录执行；把 app/ 子目录作为 gh-pages 分支的根发布
+git subtree push --prefix app origin gh-pages
+```
+
+然后在 **Settings → Pages → Build and deployment → Source** 选择 **Deploy from a branch**，分支选 `gh-pages`、目录选 `/ (root)`，保存即上线。
+
+> 也可改用 `docs/` 方式：把 `app/` 内容复制到 `docs/`，Pages 源选 `main` 分支的 `/docs` 目录（缺点是文件需同步两份）。
+
+- 上线地址：`https://<用户名>.github.io/<仓库名>/`，本仓库为 [https://yuanzhao321.github.io/FengShuiCalculators/](https://yuanzhao321.github.io/FengShuiCalculators/)。
+- 所有资源均使用相对路径，可在任意子路径下正常加载，无需修改。
+- Service Worker 仅在 `https`（GitHub Pages）/`localhost` 下注册，桌面版的 `file://` 环境会自动跳过。
+- 每次更新 `app/` 内任何外壳文件后，记得提升 `app/sw.js` 中的 `CACHE_VERSION`，再重新发布，以触发客户端缓存刷新。
 
 ## ⚖️ 免责声明 Disclaimer
 

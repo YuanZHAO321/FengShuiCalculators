@@ -2,9 +2,22 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>风水计算器 · Feng Shui Calculator — Ba Zi · Flying Stars · Tong Shu · Qi Men Dun Jia</title>
 <meta name="description" content="Free Chinese metaphysics calculator: Ba Zi (Four Pillars), Xuan Kong Flying Stars, Tong Shu Almanac, Qi Men Dun Jia.">
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#a82b22">
+<meta name="color-scheme" content="light">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="风水计算器">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&family=Noto+Sans+SC:wght@400;500;700&family=Cinzel:wght@600&display=swap" rel="stylesheet">
@@ -151,6 +164,35 @@
     l.setAttribute('x2', cx + 92 * Math.cos(a)); l.setAttribute('y2', cy + 92 * Math.sin(a));
     g.appendChild(l);
   }
+})();
+</script>
+
+<script>
+/* Flag the runtime environment so CSS can adapt (installed PWA vs browser,
+ * and iOS — including iPadOS, which masquerades as a Mac since iOS 13). */
+(function () {
+  var d = document.documentElement;
+  var standalone = (window.matchMedia &&
+      window.matchMedia("(display-mode: standalone)").matches) ||
+    window.navigator.standalone === true;
+  if (standalone) d.classList.add("pwa-standalone");
+  var ua = navigator.userAgent;
+  var iOS = /iP(hone|ad|od)/.test(ua) ||
+    (/Macintosh/.test(ua) && "ontouchend" in document);   // iPadOS desktop UA
+  if (iOS) d.classList.add("ios");
+})();
+</script>
+
+<script>
+/* Register the service worker so the app installs & runs offline as a PWA.
+ * Guarded to http(s) only — Electron's file:// origin doesn't support SWs. */
+(function () {
+  if (!("serviceWorker" in navigator)) return;
+  if (location.protocol !== "http:" && location.protocol !== "https:") return;
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(err =>
+      console.warn("SW registration failed:", err));
+  });
 })();
 </script>
 </body>

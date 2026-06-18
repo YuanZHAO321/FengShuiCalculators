@@ -1,0 +1,20 @@
+{
+  "name": "风水计算器 · Feng Shui Calculator",
+  "short_name": "风水计算器",
+  "description": "Ba Zi, Xuan Kong Flying Stars, Tong Shu almanac and Qi Men Dun Jia calculators with AI-powered chart analysis.",
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f4ecdc",
+  "theme_color": "#a82b22",
+  "categories": ["lifestyle", "utilities", "education"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

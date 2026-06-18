@@ -20,9 +20,18 @@
   --shadow-sm: 0 2px 8px rgba(60, 40, 20, .08);
   --serif: "Noto Serif SC", "Songti SC", "STSong", Georgia, "Times New Roman", serif;
   --sans: "Noto Sans SC", -apple-system, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif;
+  /* notch / home-indicator insets — 0 on devices/browsers without them */
+  --sai-top: env(safe-area-inset-top, 0px);
+  --sai-right: env(safe-area-inset-right, 0px);
+  --sai-bottom: env(safe-area-inset-bottom, 0px);
+  --sai-left: env(safe-area-inset-left, 0px);
 }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;          /* no font reflow on iOS rotation */
+  text-size-adjust: 100%;
+}
 body {
   margin: 0;
   font-family: var(--sans);
@@ -32,10 +41,21 @@ body {
     radial-gradient(circle at 90% 0%, rgba(168,43,34,.08), transparent 40%),
     repeating-linear-gradient(45deg, rgba(181,137,59,.022) 0 2px, transparent 2px 9px),
     var(--paper);
+  min-height: 100vh;
+  min-height: 100dvh;                       /* fills viewport on mobile browsers */
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent; /* no grey flash on tap (iOS/Android) */
+  overscroll-behavior-y: contain;           /* no accidental pull-to-refresh in PWA */
 }
-.wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+/* keep the cinnabar background under the status/home bars in standalone */
+.pwa-standalone { background: var(--cinnabar-deep); }
+/* honour the side notch in landscape on every container */
+.wrap {
+  max-width: 1040px; margin: 0 auto;
+  padding-left: max(20px, var(--sai-left));
+  padding-right: max(20px, var(--sai-right));
+}
 .cn { font-family: var(--serif); }
 
 /* ----------------------------- Header ----------------------------- */
@@ -48,7 +68,14 @@ body {
 }
 .header-bg { position: absolute; inset: 0; display: flex; justify-content: flex-end; align-items: center; pointer-events: none; }
 .header-bg .bagua { width: 320px; height: 320px; color: rgba(255, 240, 210, .14); margin-right: 4%; }
-.header-inner { position: relative; display: flex; align-items: center; gap: 22px; padding: 30px 20px; }
+.header-inner {
+  position: relative; display: flex; align-items: center; gap: 22px;
+  padding: 30px 20px;
+  padding-left: max(20px, var(--sai-left));
+  padding-right: max(20px, var(--sai-right));
+}
+/* installed PWA: extend cinnabar header behind the iOS status bar */
+.pwa-standalone .header-inner { padding-top: calc(30px + var(--sai-top)); }
 .seal {
   flex: 0 0 auto;
   width: 76px; height: 76px;
@@ -247,7 +274,7 @@ main { padding: 28px 0 10px; }
 .badge { display: inline-block; background: var(--cinnabar); color: #fff; padding: 2px 11px; border-radius: 12px; font-size: 13px; margin: 2px; }
 
 /* ----------------------------- Footer ----------------------------- */
-.site-footer { margin-top: 40px; background: linear-gradient(135deg, var(--cinnabar), var(--cinnabar-deep)); color: #f6e7d2; border-top: 4px solid var(--gold); padding: 24px 0; }
+.site-footer { margin-top: 40px; background: linear-gradient(135deg, var(--cinnabar), var(--cinnabar-deep)); color: #f6e7d2; border-top: 4px solid var(--gold); padding: 24px 0; padding-bottom: calc(24px + var(--sai-bottom)); }
 .site-footer p { margin: 0 0 6px; font-size: 13px; opacity: .92; }
 .site-footer .fine { font-family: var(--serif); opacity: .7; font-size: 12px; letter-spacing: 1px; }
 
@@ -325,7 +352,7 @@ main { padding: 28px 0 10px; }
 .ai-stop { color: var(--fire) !important; font-weight: 700; }
 .hidden { display: none !important; }
 
-.ai-msgs { max-height: 560px; overflow-y: auto; padding: 6px 16px; }
+.ai-msgs { max-height: 560px; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding: 6px 16px; }
 .ai-msgs:empty::before {
   content: "起盘后点击「✦ 一键分析」获取 AI 解读，或在下方输入自定义问题。";
   display: block; padding: 18px 4px; font-size: 13px; color: var(--ink-soft);
@@ -366,7 +393,8 @@ main { padding: 28px 0 10px; }
   font-family: var(--sans); font-size: 14px; line-height: 1.5;
 }
 .ai-inputrow textarea:focus { outline: none; border-color: var(--cinnabar-soft); box-shadow: 0 0 0 3px rgba(168,43,34,.12); }
-.ai-header-btn { position: absolute; top: 14px; right: 16px; background: rgba(0,0,0,.18); color: #fbeede; border-color: rgba(216,184,115,.5); z-index: 2; }
+.ai-header-btn { position: absolute; top: 14px; right: max(16px, var(--sai-right)); background: rgba(0,0,0,.18); color: #fbeede; border-color: rgba(216,184,115,.5); z-index: 2; }
+.pwa-standalone .ai-header-btn { top: calc(14px + var(--sai-top)); }
 .site-header { /* anchor for the AI settings button */ }
 .header-inner { position: relative; }
 
@@ -400,7 +428,7 @@ main { padding: 28px 0 10px; }
 
 /* archive (本地档案库) */
 .db-toast {
-  position: fixed; left: 50%; bottom: 36px; transform: translateX(-50%); z-index: 200;
+  position: fixed; left: 50%; bottom: calc(36px + var(--sai-bottom)); transform: translateX(-50%); z-index: 200;
   background: var(--ink); color: var(--paper-card); padding: 9px 20px; border-radius: 20px;
   font-size: 13.5px; box-shadow: var(--shadow); transition: opacity .25s; opacity: .96;
 }
@@ -441,9 +469,19 @@ main { padding: 28px 0 10px; }
 /* AI settings modal */
 .ai-modal {
   position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center;
-  background: rgba(30, 20, 10, .45); backdrop-filter: blur(3px); padding: 18px;
+  background: rgba(30, 20, 10, .45);
+  -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+  padding: 18px;
+  padding-top: max(18px, var(--sai-top));
+  padding-bottom: max(18px, var(--sai-bottom));
+  padding-left: max(18px, var(--sai-left));
+  padding-right: max(18px, var(--sai-right));
 }
-.ai-modal-card { width: 560px; max-width: 100%; max-height: 92vh; overflow-y: auto; }
+.ai-modal-card {
+  width: 560px; max-width: 100%;
+  max-height: 92vh; max-height: min(92vh, 92dvh);
+  overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
+}
 .ai-modal-head {
   display: flex; align-items: center; justify-content: space-between;
   padding: 14px 18px; border-bottom: 1px solid var(--line);
@@ -526,4 +564,67 @@ main { padding: 28px 0 10px; }
   .qm-cell { min-height: 104px; font-size: 12px; }
   .calc-form input, .calc-form select { min-width: 130px; }
   .horo { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* ==================== Device & PWA optimisation ===================== *
+ * Targets: iPad (portrait/landscape) & iPhone PWA (primary), web on all
+ * platforms (secondary), Win/Mac & Android PWA (potential). Tuned for
+ * current Safari / Chrome / Edge / Firefox.
+ * ------------------------------------------------------------------- */
+
+/* Kill the 300ms tap delay & double-tap-zoom on controls (page pinch-zoom
+ * stays enabled for accessibility). */
+button, .tab, a, select, summary, input[type="checkbox"], input[type="range"] {
+  touch-action: manipulation;
+}
+
+/* Touch devices (iPhone/iPad/Android): iOS auto-zooms when a focused field
+ * is < 16px — pin form fields to 16px to stop the jarring zoom-in, and grow
+ * controls to the 44px minimum tap target (Apple HIG / Material). */
+@media (pointer: coarse) {
+  .calc-form input, .calc-form select,
+  .ai-inputrow textarea, .ai-model-pick,
+  .ai-modal-body input:not([type="range"]), .ai-modal-body textarea {
+    font-size: 16px;
+  }
+  .calc-form button, .calc-form .now-btn,
+  .ai-actions button, .ai-inputrow button,
+  .ai-compare-btn, .ai-header-btn,
+  .ai-modal-foot button, .db-item-btns button {
+    min-height: 44px;
+  }
+  .tab { padding-top: 14px; padding-bottom: 12px; }
+  /* hover effects don't belong on touch — they stick after a tap */
+  .tab:hover { background: transparent; color: var(--ink-soft); }
+  .ai-copy { opacity: 1; }                 /* no hover to reveal it */
+}
+
+/* Tablet / iPad portrait: roomier two-up forms, keep the AI header tidy. */
+@media (min-width: 681px) and (max-width: 1024px) {
+  .wrap { padding-left: max(22px, var(--sai-left)); padding-right: max(22px, var(--sai-right)); }
+  .calc-form input, .calc-form select { min-width: 200px; flex: 1 1 200px; }
+  .qm-chart { max-width: 560px; }
+}
+
+/* Short landscape (phone on its side): reclaim vertical space. */
+@media (max-height: 480px) and (orientation: landscape) {
+  .header-inner { padding-top: 14px; padding-bottom: 14px; }
+  .pwa-standalone .header-inner { padding-top: calc(14px + var(--sai-top)); }
+  .header-bg .bagua { width: 200px; height: 200px; }
+  main { padding-top: 18px; }
+  .ai-msgs { max-height: 60vh; max-height: 60dvh; }
+}
+
+/* Wide desktop (Win/Mac web & PWA): give long result tables more room. */
+@media (min-width: 1280px) {
+  .wrap { max-width: 1160px; }
+}
+
+/* Fine pointer (mouse/trackpad) — restore the proper focus ring removed by
+ * the tap-highlight reset above, for keyboard users on desktop. */
+@media (hover: hover) and (pointer: fine) {
+  .now-btn:focus-visible, .ai-actions button:focus-visible,
+  .ai-inputrow button:focus-visible, .ai-model-pick:focus-visible {
+    outline: 3px solid rgba(168,43,34,.45); outline-offset: 2px;
+  }
 }
