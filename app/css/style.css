@@ -405,11 +405,15 @@ main { padding: 28px 0 10px; }
   font-size: 13.5px; box-shadow: var(--shadow); transition: opacity .25s; opacity: .96;
 }
 .db-toast.hidden { opacity: 0; pointer-events: none; }
+.db-toolbar { display: flex; justify-content: flex-end; margin-bottom: -4px; }
+.db-toolbar .db-check { font-size: 12.5px; cursor: pointer; }
 .db-list { display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto; }
 .db-item {
   display: flex; align-items: center; gap: 10px; padding: 10px 12px;
   border: 1px solid var(--line); border-radius: 9px; background: var(--paper-card);
 }
+.db-item .db-pick { flex: 0 0 auto; width: 16px; height: 16px; cursor: pointer; margin: 0; }
+.ai-modal-foot button:disabled { opacity: .45; cursor: default; }
 .db-item-main { flex: 1; min-width: 0; }
 .db-item-main b { font-family: var(--serif); }
 .db-item-main small { display: block; color: var(--ink-soft); margin-top: 2px; }

@@ -3,7 +3,8 @@
  *   · session: the four calculators' inputs + results + AI conversations
  *     are saved on every change / on exit and restored on next launch
  *   · archive (本地档案库): named saves per calculator — inputs only, or
- *     inputs together with the AI conversation — list / load / delete
+ *     inputs together with the AI conversation — list / load / delete,
+ *     plus whole-library export to / import from a JSON file
  *
  * Everything lives in localStorage; nothing leaves the machine.
  * Loads after app.js + ai.js: forms exist and submit handlers are bound,
@@ -129,6 +130,110 @@
     dbWrite(dbAll().filter(x => x.id !== id));
   }
 
+  /* ------------------------- import / export --------------------------- */
+
+  const EXPORT_TYPE = "fsc-archive";
+  const EXPORT_VERSION = 1;
+
+  function dbExport(entries) {
+    entries = entries || dbAll();
+    if (!entries.length) { toast("没有可导出的档案。"); return; }
+    const payload = {
+      type: EXPORT_TYPE,
+      version: EXPORT_VERSION,
+      exportedAt: Date.now(),
+      app: "Feng Shui Calculator",
+      entries,
+    };
+    const d = new Date();
+    const pad = n => String(n).padStart(2, "0");
+    const stamp = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    const a = el("a");
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    a.href = URL.createObjectURL(blob);
+    a.download = `fengshui-archive-${stamp}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    toast(`已导出 ${entries.length} 条档案`);
+  }
+
+  /* one imported entry → a normalised, valid archive entry, or null */
+  function sanitizeEntry(raw) {
+    if (!raw || typeof raw !== "object") return null;
+    if (!KEYS.includes(raw.module)) return null;
+    if (!raw.fields || typeof raw.fields !== "object") return null;
+    const entry = {
+      id: typeof raw.id === "string" && raw.id ? raw.id : ("a-" + Date.now() + "-" + Math.floor(Math.random() * 1e4)),
+      name: typeof raw.name === "string" && raw.name ? raw.name : describe(raw.module, raw.fields),
+      module: raw.module,
+      savedAt: typeof raw.savedAt === "number" ? raw.savedAt : Date.now(),
+      fields: raw.fields,
+      withAI: !!raw.withAI,
+    };
+    if (entry.withAI && Array.isArray(raw.messages)) entry.messages = raw.messages;
+    else entry.withAI = false;
+    return entry;
+  }
+
+  /* parse text, merge into the library (idempotent by id) → { added, skipped, invalid } */
+  function dbImport(text) {
+    let data;
+    try { data = JSON.parse(text); } catch (e) { throw new Error("文件不是有效的 JSON"); }
+    const raw = Array.isArray(data) ? data
+      : (data && data.type === EXPORT_TYPE && Array.isArray(data.entries)) ? data.entries
+      : null;
+    if (!raw) throw new Error("无法识别的档案文件");
+
+    const list = dbAll();
+    const seen = new Set(list.map(x => x.id));
+    let added = 0, skipped = 0, invalid = 0;
+    raw.forEach(r => {
+      const entry = sanitizeEntry(r);
+      if (!entry) { invalid++; return; }
+      if (seen.has(entry.id)) { skipped++; return; }
+      seen.add(entry.id);
+      list.push(entry);
+      added++;
+    });
+    if (added) {
+      list.sort((a, b) => b.savedAt - a.savedAt);
+      if (!dbWrite(list)) throw new Error("写入失败：本地存储空间不足");
+    }
+    return { added, skipped, invalid };
+  }
+
+  /* open a file picker and import the chosen file; onDone() runs after success */
+  function pickAndImport(onDone) {
+    const input = el("input");
+    input.type = "file";
+    input.accept = "application/json,.json";
+    input.style.display = "none";
+    document.body.appendChild(input);
+    input.addEventListener("change", () => {
+      const file = input.files && input.files[0];
+      input.remove();
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const { added, skipped, invalid } = dbImport(String(reader.result));
+          const parts = [`导入 ${added} 条`];
+          if (skipped) parts.push(`跳过 ${skipped} 条（已存在）`);
+          if (invalid) parts.push(`忽略 ${invalid} 条（格式无效）`);
+          toast(parts.join("，"));
+          if (added && typeof onDone === "function") onDone();
+        } catch (e) {
+          toast("导入失败：" + e.message);
+        }
+      };
+      reader.onerror = () => toast("导入失败：无法读取文件");
+      reader.readAsText(file);
+    });
+    input.click();
+  }
+
   /* ------------------------------- UI ---------------------------------- */
 
   function el(tag, cls, html) {
@@ -187,11 +292,13 @@
     const render = () => {
       const list = dbAll().filter(x => x.module === key);
       if (!list.length) return `<p class="ai-modal-note">暂无档案。先在上方计算，然后点「💾 存档」。</p>`;
-      return `<div class="db-list">` + list.map(x => {
+      return `<div class="db-toolbar"><label class="db-check"><input type="checkbox" id="db-all">全选</label></div>
+        <div class="db-list">` + list.map(x => {
         const d = new Date(x.savedAt);
         const pad = n => String(n).padStart(2, "0");
         const when = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
         return `<div class="db-item" data-id="${x.id}">
+          <input type="checkbox" class="db-pick" title="选择以导出">
           <div class="db-item-main"><b>${escHtml(x.name)}</b>
             <small>${when}${x.withAI ? ' · <span class="db-ai-badge">含AI对话</span>' : ""}</small></div>
           <span class="db-item-btns">
@@ -201,14 +308,38 @@
         </div>`;
       }).join("") + `</div>`;
     };
-    const { wrap, close } = modalShell(`档案库 <small>${MODULES[key].label}</small>`, render(), "");
+    const foot = `<button type="button" id="db-import">⬇ 导入</button>
+      <button type="button" id="db-export" disabled>⬆ 导出</button>`;
+    const { wrap, close } = modalShell(`档案库 <small>${MODULES[key].label}</small>`, render(), foot);
     const body = wrap.querySelector(".ai-modal-body");
+    const exportBtn = wrap.querySelector("#db-export");
+
+    const pickedIds = () => [...body.querySelectorAll(".db-pick:checked")].map(c => c.closest(".db-item").dataset.id);
+    const refresh = () => {
+      const n = pickedIds().length;
+      const total = body.querySelectorAll(".db-pick").length;
+      exportBtn.disabled = n === 0;
+      exportBtn.textContent = n ? `⬆ 导出 (${n})` : "⬆ 导出";
+      const all = body.querySelector("#db-all");
+      if (all) all.checked = total > 0 && n === total;
+    };
+
+    body.addEventListener("change", e => {
+      if (e.target.id === "db-all") body.querySelectorAll(".db-pick").forEach(c => { c.checked = e.target.checked; });
+      refresh();
+    });
     body.addEventListener("click", e => {
       const item = e.target.closest(".db-item");
       if (!item) return;
       if (e.target.closest(".db-load")) { dbLoad(item.dataset.id); close(); }
-      else if (e.target.closest(".db-del")) { dbDelete(item.dataset.id); body.innerHTML = render(); }
+      else if (e.target.closest(".db-del")) { dbDelete(item.dataset.id); body.innerHTML = render(); refresh(); }
     });
+    exportBtn.addEventListener("click", () => {
+      const ids = new Set(pickedIds());
+      dbExport(dbAll().filter(x => ids.has(x.id)));
+    });
+    wrap.querySelector("#db-import").addEventListener("click", () => pickAndImport(() => { body.innerHTML = render(); refresh(); }));
+    refresh();
   }
 
   function injectButtons() {
@@ -249,5 +380,5 @@
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 
-  window.FscStore = { saveSession, dbAll };           // for tests/debugging
+  window.FscStore = { saveSession, dbAll, dbExport, dbImport };  // for tests/debugging
 })();
